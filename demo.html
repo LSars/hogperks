@@ -1,0 +1,1120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<meta name="description" content="Try the Hog Perks demo: search every University of Arkansas campus resource in one place."><meta property="og:title" content="Hog Perks"><meta property="og:description" content="Try the Hog Perks demo: search every University of Arkansas campus resource in one place."><meta property="og:type" content="website">
+<title>Hog Perks</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: sticky search header over a left rail (desktop) or bottom tab bar (phone); content is a single scannable column of cards and lists. */
+:root {
+  --bg: #f6f3f3;
+  --surface: #ffffff;
+  --sunk: #efe9ea;
+  --ink: #1d1517;
+  --muted: #6c5f62;
+  --line: #e3d9db;
+  --brand: #9d2235;
+  --brand-strong: #7d1a2a;
+  --brand-ink: #ffffff;
+  --brand-soft: #f6e3e6;
+  --ok: #1d7448;
+  --ok-soft: #e1f2e8;
+  --warn: #9a5800;
+  --warn-soft: #fbeed8;
+  --crit: #b3261e;
+  --shadow: 0 1px 2px rgba(40, 10, 16, .06), 0 8px 24px rgba(40, 10, 16, .08);
+  --f-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Public Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --r: 12px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141012; --surface: #1e181a; --sunk: #191315; --ink: #f3eded; --muted: #ab9ca0; --line: #352a2d;
+    --brand: #e45a70; --brand-strong: #f07f91; --brand-ink: #1a0a0e; --brand-soft: #3b1c23;
+    --ok: #5fcf93; --ok-soft: #173426; --warn: #f0b056; --warn-soft: #3a2a12; --crit: #ff7b72;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141012; --surface: #1e181a; --sunk: #191315; --ink: #f3eded; --muted: #ab9ca0; --line: #352a2d;
+  --brand: #e45a70; --brand-strong: #f07f91; --brand-ink: #1a0a0e; --brand-soft: #3b1c23;
+  --ok: #5fcf93; --ok-soft: #173426; --warn: #f0b056; --warn-soft: #3a2a12; --crit: #ff7b72;
+  --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+  color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.5; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--surface); }
+h1, h2, h3 { font-family: var(--f-display); line-height: 1.15; margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(26px, 4vw, 34px); font-weight: 800; letter-spacing: -.01em; }
+h2 { font-size: 20px; font-weight: 600; }
+h3 { font-size: 16px; font-weight: 600; font-family: var(--f-body); }
+p { margin: 0; }
+a { color: var(--brand); }
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; border-radius: 6px; }
+.mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; font-size: .92em; }
+.eyebrow { font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.muted { color: var(--muted); }
+.gutter { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+/* ---------- Login ---------- */
+.login { min-height: 100vh; display: grid; grid-template-columns: 1.1fr 1fr; }
+.login-art { background: var(--brand); color: #fff; padding-block: 48px; display: flex; flex-direction: column; justify-content: space-between; gap: 40px; position: relative; overflow: hidden; }
+.login-art .wordmark { font-family: var(--f-display); font-weight: 800; font-size: 22px; letter-spacing: -.01em; }
+.login-art h1 { font-size: clamp(34px, 5vw, 56px); max-width: 12ch; color: #fff; }
+.login-art p { max-width: 42ch; opacity: .9; font-size: 16px; }
+.ticker { display: flex; flex-wrap: wrap; gap: 8px; max-width: 520px; }
+.ticker span { border: 1px solid rgba(255,255,255,.35); border-radius: 999px; padding: 6px 12px; font-size: 13px; background: rgba(255,255,255,.08); }
+.login-form-wrap { display: flex; align-items: center; justify-content: center; padding-block: 40px; background: var(--bg); }
+.login-form { width: 100%; max-width: 380px; display: flex; flex-direction: column; gap: 18px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-weight: 600; font-size: 14px; }
+.field input { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 12px 14px; font-size: 16px; }
+.field input:focus { outline: 2px solid var(--brand); border-color: transparent; }
+.demo-warning { background: var(--warn-soft); color: var(--ink); border: 1px solid color-mix(in srgb, var(--warn) 35%, transparent); border-radius: 10px; padding: 12px 14px; font-size: 13.5px; display: flex; gap: 10px; }
+.demo-warning strong { color: var(--warn); }
+.btn { border: 0; border-radius: 10px; padding: 12px 16px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
+.btn-primary { background: var(--brand); color: var(--brand-ink); }
+.btn-primary:hover { background: var(--brand-strong); }
+.btn-ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+.btn-ghost:hover { background: var(--sunk); }
+.btn-sm { padding: 7px 12px; font-size: 13.5px; border-radius: 8px; }
+.login-foot { font-size: 12.5px; color: var(--muted); }
+
+/* ---------- App shell ---------- */
+.app { display: grid; grid-template-columns: 236px minmax(0, 1fr); min-height: 100vh; }
+.rail { position: sticky; top: 0; height: 100vh; border-right: 1px solid var(--line); background: var(--surface); padding: 20px 14px; display: flex; flex-direction: column; gap: 4px; }
+.rail .wordmark { font-family: var(--f-display); font-weight: 800; font-size: 18px; color: var(--brand); padding: 4px 10px 18px; word-break: break-all; }
+.nav-btn { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; border: 0; background: transparent; text-align: left; font-weight: 600; color: var(--muted); }
+.nav-btn svg { width: 20px; height: 20px; flex: none; }
+.nav-btn:hover { background: var(--sunk); color: var(--ink); }
+.nav-btn[aria-current="page"] { background: var(--brand-soft); color: var(--brand); }
+.rail-foot { margin-top: auto; font-size: 12px; color: var(--muted); padding: 10px; }
+.main { min-width: 0; display: flex; flex-direction: column; }
+.topbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: color-mix(in srgb, var(--surface) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.topbar-inner { display: flex; align-items: center; gap: 12px; padding-block: 12px; max-width: 1080px; }
+.mobile-mark { display: none; font-family: var(--f-display); font-weight: 800; color: var(--brand); font-size: 16px; }
+.search { flex: 1; min-width: 0; position: relative; }
+.search svg { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: var(--muted); pointer-events: none; }
+.search input { width: 100%; border: 1px solid var(--line); background: var(--bg); border-radius: 999px; padding: 11px 16px 11px 40px; font-size: 15.5px; }
+.search input:focus { outline: 2px solid var(--brand); border-color: transparent; background: var(--surface); }
+.help-now { border: 0; background: var(--crit); color: #fff; border-radius: 999px; padding: 9px 14px; font-weight: 700; font-size: 13.5px; white-space: nowrap; }
+:root[data-theme="dark"] .help-now { color: #1a0a0e; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .help-now { color: #1a0a0e; } }
+.avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--brand); color: var(--brand-ink); display: grid; place-items: center; font-weight: 700; border: 0; flex: none; }
+.proto-tag { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--warn); background: var(--warn-soft); padding: 3px 8px; border-radius: 6px; white-space: nowrap; }
+.content { padding-block: 24px 96px; max-width: 1080px; width: 100%; display: flex; flex-direction: column; gap: 28px; }
+.tabbar { display: none; }
+
+/* ---------- Home ---------- */
+.hello { display: flex; flex-direction: column; gap: 6px; }
+.section { display: flex; flex-direction: column; gap: 12px; }
+.section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.sample-note { font-size: 12px; color: var(--muted); display: inline-flex; align-items: center; gap: 6px; }
+.sample-note::before { content: ""; width: 8px; height: 8px; border-radius: 2px; background: var(--warn); }
+.acct-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+.acct { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 16px; display: flex; flex-direction: column; gap: 8px; text-align: left; }
+button.acct:hover { border-color: var(--brand); }
+.acct .label { font-size: 13px; color: var(--muted); font-weight: 600; }
+.acct .value { font-family: var(--f-display); font-size: 26px; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.acct .sub { font-size: 13px; color: var(--muted); }
+.acct .go { font-size: 13px; font-weight: 700; color: var(--brand); margin-top: auto; }
+.meter { height: 6px; border-radius: 99px; background: var(--sunk); overflow: hidden; }
+.meter i { display: block; height: 100%; background: var(--brand); border-radius: 99px; }
+.pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+.pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.pill.ok { color: var(--ok); background: var(--ok-soft); }
+.pill.warn { color: var(--warn); background: var(--warn-soft); }
+.pill.closed { color: var(--muted); background: var(--sunk); }
+.pill.na { color: var(--muted); background: var(--sunk); }
+.pill.na::before { display: none; }
+.try { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 7px 13px; font-size: 14px; font-weight: 500; }
+.chip:hover { border-color: var(--brand); color: var(--brand); }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.cat { border: 1px solid var(--line); background: var(--surface); border-radius: var(--r); padding: 14px; display: flex; flex-direction: column; gap: 10px; text-align: left; }
+.cat:hover { border-color: var(--brand); }
+.cat .ico { width: 36px; height: 36px; border-radius: 10px; background: var(--brand-soft); color: var(--brand); display: grid; place-items: center; }
+.cat .ico svg { width: 20px; height: 20px; }
+.cat b { font-size: 14.5px; }
+.cat small { color: var(--muted); font-size: 12.5px; }
+
+/* ---------- Lists ---------- */
+.list { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+.row { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 14px 16px; border: 0; border-top: 1px solid var(--line); background: transparent; text-align: left; width: 100%; }
+.row:first-child { border-top: 0; }
+.row:hover { background: var(--sunk); }
+.row .ico { width: 40px; height: 40px; border-radius: 10px; background: var(--brand-soft); color: var(--brand); display: grid; place-items: center; }
+.row .ico svg { width: 20px; height: 20px; }
+.row .t { font-weight: 700; }
+.row .s { font-size: 13.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.row .meta { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.row .where { font-size: 12px; color: var(--muted); }
+.filters { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; }
+.filters .chip { flex: none; }
+.empty { background: var(--surface); border: 1px dashed var(--line); border-radius: var(--r); padding: 28px; text-align: center; color: var(--muted); display: flex; flex-direction: column; gap: 10px; align-items: center; }
+.count { font-size: 13px; color: var(--muted); }
+mark { background: var(--brand-soft); color: inherit; border-radius: 3px; padding: 0 2px; }
+
+/* ---------- Orgs ---------- */
+.org-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
+.org { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px; display: flex; gap: 12px; align-items: center; }
+.org .mono-badge { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; font-weight: 800; font-family: var(--f-display); background: var(--sunk); color: var(--ink); flex: none; font-size: 14px; }
+.org .body { min-width: 0; flex: 1; }
+.org .body b { display: block; font-size: 14.5px; }
+.org .body small { color: var(--muted); font-size: 12.5px; }
+.follow { border: 1px solid var(--line); background: transparent; border-radius: 8px; padding: 6px 10px; font-size: 13px; font-weight: 700; flex: none; }
+.follow[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); color: var(--brand-ink); }
+.callout { background: var(--brand-soft); border-radius: var(--r); padding: 16px; display: flex; gap: 14px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.callout p { max-width: 60ch; }
+
+/* ---------- Account ---------- */
+.profile { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 20px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+.profile .avatar { width: 56px; height: 56px; font-size: 20px; }
+.kv { display: grid; grid-template-columns: minmax(120px, 200px) minmax(0, 1fr); background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+.kv div { padding: 11px 16px; border-top: 1px solid var(--line); }
+.kv div:nth-child(-n+2) { border-top: 0; }
+.kv div:nth-child(odd) { color: var(--muted); font-size: 13.5px; font-weight: 600; }
+.linked { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--ok); }
+.linked::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--ok); }
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* ---------- Sheet ---------- */
+.scrim { position: fixed; inset: 0; background: rgba(20, 8, 12, .45); z-index: 40; display: flex; justify-content: flex-end; }
+.sheet { background: var(--surface); width: min(460px, 100%); height: 100%; overflow-y: auto; padding: 22px 22px calc(28px + env(safe-area-inset-bottom, 0px)); padding-right: max(22px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 18px; box-shadow: var(--shadow); animation: slideIn .22s ease-out; }
+.sheet > * { flex-shrink: 0; }
+.fact .pill { align-self: flex-start; }
+@keyframes slideIn { from { transform: translateX(24px); opacity: .6; } to { transform: none; opacity: 1; } }
+.sheet-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.x { border: 0; background: var(--sunk); width: 36px; height: 36px; border-radius: 50%; font-size: 20px; line-height: 1; flex: none; }
+.facts { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+.fact { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 12px; padding: 12px 14px; border-top: 1px solid var(--line); align-items: start; }
+.fact:first-child { border-top: 0; }
+.fact svg { width: 20px; height: 20px; color: var(--brand); margin-top: 1px; }
+.fact .k { font-size: 12px; color: var(--muted); font-weight: 600; }
+.phone-line { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.copy { border: 1px solid var(--line); background: transparent; border-radius: 7px; padding: 3px 9px; font-size: 12px; font-weight: 700; }
+.hours-tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.hours-tbl td { padding: 2px 0; }
+.hours-tbl td:last-child { text-align: right; font-family: var(--f-mono); font-size: 12.5px; }
+.hours-tbl tr.today td { font-weight: 700; color: var(--brand); }
+.bul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; }
+.source { font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 12px; }
+.source a { word-break: break-all; }
+.crisis-list { display: flex; flex-direction: column; gap: 10px; }
+.crisis { border: 1px solid var(--line); border-radius: var(--r); padding: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.crisis .num { font-family: var(--f-mono); font-size: 18px; font-weight: 500; user-select: all; }
+.crisis.top { border-color: var(--crit); }
+.crisis.top .num { color: var(--crit); }
+
+.footer { font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 16px; max-width: 75ch; display: flex; flex-direction: column; gap: 6px; }
+.toast { position: fixed; left: 50%; bottom: calc(88px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 10px; font-size: 14px; font-weight: 600; z-index: 60; box-shadow: var(--shadow); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 860px) {
+  .login { grid-template-columns: 1fr; }
+  .login-art { padding-block: 32px; gap: 24px; }
+  .app { grid-template-columns: minmax(0, 1fr); }
+  .rail { display: none; }
+  .mobile-mark { display: block; }
+  .topbar-inner { flex-wrap: wrap; }
+  .search { order: 5; flex-basis: 100%; }
+  .topbar-inner .spacer { flex: 1; }
+  .tabbar { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; background: var(--surface); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom, 0px); justify-content: space-around; }
+  .tabbar .nav-btn { flex-direction: column; gap: 3px; font-size: 11px; padding: 9px 4px 8px; flex: 1; align-items: center; border-radius: 0; }
+  .tabbar .nav-btn[aria-current="page"] { background: transparent; }
+  .scrim { align-items: flex-end; }
+  .sheet { width: 100%; height: auto; max-height: 90vh; border-radius: 18px 18px 0 0; padding-left: max(18px, env(safe-area-inset-left, 0px)); padding-right: max(18px, env(safe-area-inset-right, 0px)); animation-name: slideUp; }
+  @keyframes slideUp { from { transform: translateY(30px); opacity: .6; } to { transform: none; opacity: 1; } }
+  .row { grid-template-columns: 36px minmax(0, 1fr); }
+  .row .ico { width: 36px; height: 36px; }
+  .row .meta { grid-column: 2; flex-direction: row; align-items: center; justify-content: flex-start; flex-wrap: wrap; }
+  .kv { grid-template-columns: minmax(0, 1fr); }
+  .kv div:nth-child(2) { border-top: 1px solid var(--line); }
+  .kv div:nth-child(odd) { padding-bottom: 0; }
+  .kv div:nth-child(even) { border-top: 0; padding-top: 2px; }
+  .kv div:first-child { border-top: 0; }
+}
+@media (max-width: 420px) {
+  .proto-tag { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script>
+(function () {
+"use strict";
+
+/* ===== Brand ===== */
+const APP_NAME = "Hog Perks";
+const CHECKED = "November 3, 2026";
+
+/* ===== Icons ===== */
+const I = {
+  home: '<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+  grid: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+  people: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.2-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M16.5 14.6c2.6.2 4.4 1.9 5 5.4"/>',
+  star: '<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c.8-4.2 4-6.5 8-6.5s7.2 2.3 8 6.5"/>',
+  search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+  money: '<rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.8"/><path d="M6 9.5v5M18 9.5v5"/>',
+  heart: '<path d="M12 20s-7.5-4.6-9-9.5C2 6.9 4.4 4.5 7.2 4.5c2 0 3.6 1.1 4.8 2.8 1.2-1.7 2.8-2.8 4.8-2.8 2.8 0 5.2 2.4 4.2 6C19.5 15.4 12 20 12 20z"/>',
+  book: '<path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H20v15H5.5A1.5 1.5 0 0 0 4 19.5z"/><path d="M4 19.5A1.5 1.5 0 0 0 5.5 21H20"/>',
+  food: '<path d="M7 3v8M4.5 3v5a2.5 2.5 0 0 0 5 0V3M7 11v10"/><path d="M17 21V3c-2.2 1.2-3.5 3.7-3.5 7v4H17"/>',
+  bed: '<path d="M3 18V6M3 14h18v4M21 14v-2.5A3.5 3.5 0 0 0 17.5 8H11v6"/><circle cx="7" cy="11" r="2"/>',
+  brief: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 5v2M3 12.5h18"/>',
+  shield: '<path d="M12 3 4.5 6v5.5c0 4.6 3.1 8.2 7.5 9.5 4.4-1.3 7.5-4.9 7.5-9.5V6z"/>',
+  spark: '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8"/>',
+  bus: '<rect x="4" y="3" width="16" height="15" rx="3"/><path d="M4 11h16M8 18v3M16 18v3"/><circle cx="8" cy="14.5" r=".8"/><circle cx="16" cy="14.5" r=".8"/>',
+  pin: '<path d="M12 21s-6.5-5.7-6.5-11a6.5 6.5 0 0 1 13 0c0 5.3-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/>',
+  phone: '<path d="M5 3.5h3.2l1.6 4.2-2 1.3a11 11 0 0 0 5.2 5.2l1.3-2 4.2 1.6V17a2.5 2.5 0 0 1-2.7 2.5C9.8 19 5 14.2 4.5 6.2A2.5 2.5 0 0 1 5 3.5z"/>',
+  mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 6 8.5 7 8.5-7"/>',
+  clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+  link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+  info: '<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5M12 8v.01"/>'
+};
+const svg = (n) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + I[n] + '</svg>';
+
+/* ===== Categories ===== */
+const CATS = {
+  financial: { label: "Money & Aid", icon: "money", blurb: "Aid, bills, scholarships" },
+  health:    { label: "Health & Wellness", icon: "heart", blurb: "Medical, counseling, rec" },
+  academics: { label: "Academics", icon: "book", blurb: "Tutoring, library, records" },
+  dining:    { label: "Dining & Food", icon: "food", blurb: "Dining halls, pantry" },
+  housing:   { label: "Housing", icon: "bed", blurb: "Halls, repairs" },
+  career:    { label: "Career", icon: "brief", blurb: "Jobs, internships, résumés" },
+  safety:    { label: "Safety", icon: "shield", blurb: "Police, rides, Title IX" },
+  life:      { label: "Campus Life", icon: "spark", blurb: "Orgs, centers, service" },
+  tech:      { label: "Tech & Transit", icon: "bus", blurb: "IT help, buses, parking" }
+};
+
+/* ===== Hours helpers (minutes after midnight; 1440 = midnight) ===== */
+const WK = [1, 2, 3, 4, 5];
+const h = (days, open, close) => ({ days, o: open * 60, c: close * 60 });
+
+/* ===== Resources — every fact comes from the uark.edu page in `source` (checked Nov 3, 2026) ===== */
+const R = [
+  /* Money & Aid */
+  { id: "finaid", cat: "financial", name: "Office of Financial Aid",
+    summary: "Help with FAFSA, grants, loans, and your financial aid package. Walk in or book a virtual appointment.",
+    location: "114 Silas Hunt Hall (corner of Maple and Garland, across from Pat Walker Health Center)",
+    phones: [{ l: "Main", n: "479-575-3806" }], email: "finaid@uark.edu",
+    hours: [h(WK, 8, 17)],
+    details: ["Include your name and student ID number when you email.", "Current students can book a virtual appointment through Student Success in Blackboard."],
+    web: "https://finaid.uark.edu/", source: "https://finaid.uark.edu/office_information/",
+    tags: "fafsa loan loans grant grants pell aid money broke cant afford tuition help financial package award refund" },
+  { id: "treasurer", cat: "financial", name: "Treasurer's Office (Student Accounts)",
+    summary: "Your tuition bill, payments, and payment plans. Pay online through Workday.",
+    location: "640 N. Garland Ave., Suite 108",
+    phones: [{ l: "Main and Collections", n: "479-575-5651" }], email: "treainfo@uark.edu",
+    details: ["Pay online in Workday by e-check (no fee) or credit/debit card (1.93% convenience fee).", "Cards are not accepted by mail, phone, or at the cashier's window.", "Payment plans spread the current term's tuition, fees, and housing into installments for a $40 nonrefundable fee.", "Fall 2026: the last payment-plan installment is due November 21, 2026.", "Balances from past semesters go to the Collections Department."],
+    web: "https://treasurer.uark.edu/", source: "https://treasurer.uark.edu/payment_plan.aspx",
+    tags: "bill pay payment tuition balance due fees bursar cashier workday installment plan collections owe money late fee" },
+  { id: "scholarships", cat: "financial", name: "Academic Scholarship Office",
+    summary: "University scholarships for new and current students. Apply through AcademicWorks with your UARK login.",
+    location: "Silas Hunt Hall, Room 114",
+    phones: [{ l: "Main", n: "479-575-4464" }], email: "scholars@uark.edu",
+    hours: [h(WK, 8, 17)],
+    details: ["Awards over 4,000 scholarships totaling more than $12 million each year.", "The university-wide competition is open to current undergraduate and graduate students who completed the previous fall semester at the U of A.", "State programs like the Arkansas Academic Challenge Scholarship are run by the state (ADHE)."],
+    web: "https://scholarships.uark.edu/current-students/", source: "https://scholarships.uark.edu/current-students/",
+    tags: "scholarship scholarships academicworks free money award merit academic challenge" },
+  { id: "uacares", cat: "financial", name: "U of A Cares (Dean of Students)",
+    summary: "Case managers who connect you with the right help when life gets in the way of school.",
+    phones: [{ l: "Dean of Students", n: "479-575-5004" }],
+    details: ["Anyone can submit a non-emergency Cares Report about a student who could use outreach.", "Case managers link students with resources to get past barriers."],
+    web: "https://uofacares.uark.edu/", source: "https://uofacares.uark.edu/",
+    tags: "struggling crisis stressed help emergency case manager dean of students family emergency withdraw overwhelmed rent" },
+
+  /* Health & Wellness */
+  { id: "pwhc", cat: "health", name: "Pat Walker Health Center: Primary Care",
+    summary: "Campus doctors for illness, injuries, and checkups. Book in the Patient Portal or by phone.",
+    location: "525 N. Garland Ave.",
+    phones: [{ l: "Appointments", n: "479-575-4451" }, { l: "Psychiatry", n: "479-575-4451, option 1" }],
+    hours: [h([1, 2, 3, 4], 8, 17), h([5], 9, 17)],
+    details: ["Same-day walk-in slots are limited to urgent needs. Call ahead first.", "Cancel or reschedule at least two hours before your appointment."],
+    web: "https://health.uark.edu/medical-health/", source: "https://health.uark.edu/medical-health/appointments.php",
+    tags: "doctor sick medical clinic flu fever cold injury hurt nurse appointment health center physical prescription psychiatry" },
+  { id: "caps", cat: "health", name: "Counseling & Psychological Services (CAPS)",
+    summary: "Counseling for stress, anxiety, depression, and more. The phone line answers after hours for emergencies.",
+    location: "Pat Walker Health Center, 2nd floor",
+    phones: [{ l: "Main and after-hours emergencies", n: "479-575-5276" }],
+    hours: [h([1, 2, 3, 4], 8, 17), h([5], 9, 17)],
+    details: ["If you're in crisis or need to be seen today, go to the CAPS office during business hours.", "After hours, on weekends, and over breaks, a mental health professional answers 479-575-5276.", "National options listed by CAPS: call or text 988, or text HOME to 741741."],
+    web: "https://health.uark.edu/mental-health/caps_services.php", source: "https://health.uark.edu/mental-health/caps_services.php",
+    tags: "counseling therapy therapist mental health anxious anxiety depressed depression stress stressed sad lonely panic suicide crisis talk" },
+  { id: "gyn", cat: "health", name: "Pat Walker GYN (Women's) Clinic",
+    summary: "Gynecological care at Pat Walker Health Center. Book in the Patient Portal or by phone.",
+    location: "Pat Walker Health Center, 525 N. Garland Ave.",
+    phones: [{ l: "GYN Clinic", n: "479-575-4478" }],
+    web: "https://health.uark.edu/medical-health/", source: "https://health.uark.edu/medical-health/appointments.php",
+    tags: "gyn gynecology women's health birth control pap sexual health" },
+  { id: "allergy", cat: "health", name: "Allergy, Immunizations & Travel Clinic",
+    summary: "Allergy shots, vaccines, and travel health visits at Pat Walker Health Center.",
+    location: "Pat Walker Health Center, 525 N. Garland Ave.",
+    phones: [{ l: "Clinic", n: "479-575-7723" }],
+    web: "https://health.uark.edu/medical-health/", source: "https://health.uark.edu/medical-health/appointments.php",
+    tags: "vaccine shot shots flu shot immunization allergy travel study abroad" },
+  { id: "sear", cat: "health", name: "Substance Education and Recovery (SEAR)",
+    summary: "Support and education around alcohol and other substance use.",
+    location: "Pat Walker Health Center",
+    phones: [{ l: "SEAR", n: "479-575-2500" }],
+    web: "https://health.uark.edu/", source: "https://health.uark.edu/medical-health/appointments.php",
+    tags: "alcohol drinking drugs substance recovery addiction sober" },
+  { id: "cea", cat: "health", name: "Center for Educational Access (CEA)",
+    summary: "Disability accommodations for classes, testing, housing, and dining. Register online.",
+    location: "Arkansas Union, Room 209",
+    phones: [{ l: "Main", n: "479-575-3104" }], email: "ada@uark.edu",
+    details: ["Housing and dining accommodations use a separate request from academic accommodations.", "Accommodated exams are scheduled through the Office of Testing Services."],
+    web: "https://cea.uark.edu/", source: "https://cea.uark.edu/students/getting-started.php",
+    tags: "disability accommodation accommodations ada adhd extra time testing accessible access learning" },
+  { id: "urec", cat: "health", name: "University Recreation + Wellness (UREC)",
+    summary: "Gyms, fitness classes, and rec sports. Every U of A student gets a UREC membership.",
+    location: "HPER Building, 155 N. Stadium Dr. (Main Office: HPER 229)",
+    phones: [{ l: "Membership office", n: "479-575-4646" }],
+    details: ["Membership covers the HPER Building, the UREC Fitness Center in the Arkansas Union, the UREC Sports Complex, and the UREC Tennis Center.", "Bring your U of A or UREC ID card to get in."],
+    web: "https://urec.uark.edu/", source: "https://urec.uark.edu/facilities/facility-policies/index.php",
+    tags: "gym workout fitness exercise rec intramurals sports hper weights pool tennis wellness" },
+
+  /* Academics */
+  { id: "ssc", cat: "academics", name: "Student Success Center: Tutoring & Coaching",
+    summary: "Free tutoring, peer academic coaching, and supplemental instruction. Book through Penji.",
+    location: "The CORD, 470 N. Campus Walk. Also in Mullins Library, Futrall Hall 158, and Maple Hill East 140.",
+    email: "uatutor@uark.edu",
+    details: ["Covered by tuition at no extra charge.", "Book one appointment per day and up to three per week for each program.", "Tutoring is available by appointment, drop-in, and in 21 weekly study halls."],
+    web: "https://success.uark.edu/", source: "https://success.uark.edu/about-us/faqs.php",
+    tags: "tutor tutoring help with class failing study coaching supplemental instruction si math chemistry homework grades" },
+  { id: "writing", cat: "academics", name: "Writing Studio",
+    summary: "One-on-one help with papers, in person or on Zoom. Consultants coach you; they don't edit for you.",
+    location: "The CORD, Room 209",
+    email: "uawrite@uark.edu",
+    details: ["Open to undergraduate and graduate students.", "Plan on about 5 pages per hour.", "Consultants don't work on take-home exams."],
+    web: "https://success.uark.edu/", source: "https://news.uark.edu/articles/82361/student-success-center-writing-studio-receives-certification-for-tutoring-program",
+    tags: "writing essay paper thesis citation grammar english comp help proofread" },
+  { id: "library", cat: "academics", name: "University Libraries (Mullins Library)",
+    summary: "Research help, study space, computers, and printing. Check the Libraries site for today's hours.",
+    location: "Mullins Library. Main Help Desk on level 2.",
+    phones: [{ l: "Main Help Desk", n: "479-575-4104" }, { l: "Text", n: "479-385-0803" }], email: "refer@uark.edu",
+    details: ["IT staff are at the level 2 help desk, and the Tech Spot desk on level 2 handles printing problems."],
+    web: "https://libraries.uark.edu/", source: "https://libraries.uark.edu/about/service-locations.php",
+    tags: "library study quiet research books print printing librarian mullins computer" },
+  { id: "registrar", cat: "academics", name: "Office of the Registrar",
+    summary: "Transcripts, enrollment verification, and student records.",
+    location: "Campus office: 146 Silas H. Hunt Hall",
+    phones: [{ l: "Main", n: "479-575-5451" }], email: "registra@uark.edu",
+    hours: [h(WK, 8, 17)],
+    details: ["Transcripts by mail cost $11 each and include all coursework. Partial transcripts aren't offered.", "Enrollment verification is free. Request it at Silas Hunt Hall or by email with your name, date of birth, and student ID."],
+    web: "https://registrar.uark.edu/", source: "https://registrar.uark.edu/student-records/transcript-request.php",
+    tags: "transcript records enrollment verification registration register grades degree audit official" },
+  { id: "testing", cat: "academics", name: "Office of Testing Services",
+    summary: "Scheduling and proctoring for accommodated exams.",
+    location: "97 N. Razorback Road",
+    phones: [{ l: "Main", n: "479-575-3948" }], email: "testing@uark.edu",
+    web: "https://cea.uark.edu/accommodated_testing/", source: "https://cea.uark.edu/accommodated_testing/",
+    tags: "exam test proctor testing center accommodated" },
+
+  /* Dining & Food */
+  { id: "pantry", cat: "dining", name: "Jane B. Gearhart Full Circle Food Pantry",
+    summary: "Free groceries for anyone with a current U of A or UAMS ID, plus their household. Order online and pick up.",
+    location: "Bud Walton Hall, Room WAHR C204, 324 Stadium Dr. (east side, across from the Union Parking Garage)",
+    email: "pantry@uark.edu",
+    hours: [h([1], 11, 15), h([3], 15, 18), h([4], 10, 14)],
+    details: ["Order online at fullcircle.uark.edu, then pick up during open hours.", "Full Circle Express offers pickup at select campus sites.", "Closed for university holidays and breaks."],
+    web: "https://service.uark.edu/services/pantry/", source: "https://service.uark.edu/services/pantry/",
+    tags: "food pantry free food hungry groceries cant afford food insecurity meal broke" },
+  { id: "pomfret", cat: "dining", name: "Pomfret Dining Hall",
+    summary: "All-you-care-to-eat dining hall inside Pomfret Hall. Uses meal swipes.",
+    location: "Pomfret Hall",
+    web: "https://housing.uark.edu/halls/pomfret-hall.php", source: "https://housing.uark.edu/live-here/dining-information-and-rates.php",
+    tags: "dining hall eat food meal swipe buffet breakfast lunch dinner" },
+  { id: "fulbright", cat: "dining", name: "Fulbright Dining Hall",
+    summary: "All-you-care-to-eat dining hall at Northwest Quad. Uses meal swipes.",
+    location: "Northwest Quad",
+    web: "https://housing.uark.edu/live-here/dining-information-and-rates.php", source: "https://housing.uark.edu/live-here/dining-information-and-rates.php",
+    tags: "dining hall eat food meal swipe buffet breakfast lunch dinner northwest quad" },
+  { id: "1021", cat: "dining", name: "1021 Food Hall",
+    summary: "Food hall with nine places to eat. Meal swipes work here.",
+    web: "https://housing.uark.edu/live-here/dining-information-and-rates.php", source: "https://housing.uark.edu/live-here/dining-information-and-rates.php",
+    tags: "food hall eat lunch dinner meal swipe" },
+  { id: "union", cat: "dining", name: "Arkansas Union",
+    summary: "The student center: food court, Starbucks, Chick-fil-A, a UREC gym, the IT Help Desk, and many student offices.",
+    location: "Arkansas Union",
+    hours: [h(WK, 6, 24), h([6], 9, 24), h([0], 12, 24)],
+    details: ["Meal plans include more than 20 retail spots on campus, including Chick-fil-A, Starbucks, and Slim Chickens.", "Hours shown are building hours. Individual restaurants may differ."],
+    web: "https://union.uark.edu/", source: "https://union.uark.edu/",
+    tags: "union food court coffee starbucks chick-fil-a slim chickens eat lunch student center hang out" },
+  { id: "mealplans", cat: "dining", name: "Meal Plans & Rates",
+    summary: "Compare meal plans and prices. Weekly meal swipes reset Sunday morning.",
+    details: ["2026–27 on-campus plans per semester: Unlimited Plus $2,842.50, Unlimited $2,774.50, 15-Meal Plus $2,628, 15-Meal $2,554, 10-Meal $2,371, Junior/Senior $1,652.50.", "Off-campus plans range from $425 to $2,842.50 per semester.", "Summer meal plans go on sale in late April."],
+    web: "https://housing.uark.edu/live-here/dining-information-and-rates.php", source: "https://housing.uark.edu/live-here/dining-information-and-rates.php",
+    tags: "meal plan swipes dining dollars price cost rates change meal plan" },
+
+  /* Housing */
+  { id: "housing", cat: "housing", name: "University Housing",
+    summary: "Residence hall assignments, room selection, and housing questions.",
+    location: "960 W. Douglas St.",
+    phones: [{ l: "Main", n: "479-575-4687 (575-HOUS)" }], email: "housing@uark.edu",
+    web: "https://housing.uark.edu/", source: "https://housing.uark.edu/about-us/administrative-services.php",
+    tags: "housing dorm residence hall room roommate assignment move in move out ra live on campus" },
+  { id: "fixit", cat: "housing", name: "Residence Hall Repairs (FIX IT)",
+    summary: "Something broken in your hall? The service center answers around the clock.",
+    phones: [{ l: "24/7 service center", n: "479-575-7005" }],
+    hours: [h([0, 1, 2, 3, 4, 5, 6], 0, 24)],
+    details: ["Call or submit a FIX IT request online."],
+    web: "https://housing.uark.edu/about-us/residential-facilities.php", source: "https://housing.uark.edu/about-us/residential-facilities.php",
+    tags: "broken ac air conditioning heat leak toilet maintenance repair fix it dorm room lock" },
+  { id: "facilities", cat: "housing", name: "Facilities Management Service Center",
+    summary: "Report problems in campus buildings outside University Housing.",
+    phones: [{ l: "Service Center", n: "479-575-5050" }],
+    hours: [h(WK, 7.5, 17)],
+    web: "https://fama.uark.edu/contact-us.php", source: "https://housing.uark.edu/about-us/residential-facilities.php",
+    tags: "building repair classroom broken maintenance facilities" },
+
+  /* Career */
+  { id: "career", cat: "career", name: "Offices of Career Connections",
+    summary: "Career advising, résumé reviews, and job and internship search. Book in Handshake.",
+    location: "Arkansas Union, Suite 607. Walton College students: WJWH 226.",
+    phones: [{ l: "Main", n: "479-575-2805" }, { l: "Walton College", n: "479-575-6100" }],
+    details: ["In Handshake, open Career Center, then Appointments.", "A walk-in Career Studio is on the first floor of the CORD. No appointment needed.", "Video, phone, and email appointments are available for online and off-campus students."],
+    web: "https://career.uark.edu/", source: "https://career.uark.edu/students/appointment/appointment.php",
+    tags: "career job jobs internship resume cv interview handshake major advice employment work hire" },
+
+  /* Safety */
+  { id: "uapd", cat: "safety", name: "University of Arkansas Police (UAPD)",
+    summary: "Campus police. Call 911 for emergencies and 479-575-2222 for everything else.",
+    phones: [{ l: "Emergency", n: "911" }, { l: "Non-emergency (call or text)", n: "479-575-2222" }],
+    details: ["Need someone to walk with you at night? Text UAPD to ask for an escort. Officers provide escorts when call volume allows.", "The SafeZone app connects you directly with UAPD."],
+    web: "https://uapd.uark.edu/", source: "https://uapd.uark.edu/safety-update.php",
+    tags: "police emergency crime report stolen theft unsafe escort walk night security safezone" },
+  { id: "saferide", cat: "safety", name: "Safe Ride",
+    summary: "A free last-resort ride when you're stuck somewhere uncomfortable or unsafe. It isn't a taxi service.",
+    phones: [{ l: "Safe Ride", n: "479-575-7233 (575-SAFE)" }],
+    details: ["Call after normal bus hours.", "Service hours vary by night. Ask when you call."],
+    web: "https://news.uark.edu/articles/80547/welcome-back-your-best-semester-starts-here", source: "https://news.uark.edu/articles/80547/welcome-back-your-best-semester-starts-here",
+    tags: "ride home night drunk unsafe stuck late transportation" },
+  { id: "titleix", cat: "safety", name: "Equal Opportunity, Compliance & Title IX",
+    summary: "Report sexual harassment, assault, or discrimination and get support options.",
+    phones: [{ l: "Main", n: "479-575-7111" }, { l: "TDD", n: "479-575-3646" }], email: "titleix@uark.edu",
+    web: "https://titleix.uark.edu/", source: "https://titleix.uark.edu/",
+    tags: "title ix harassment assault discrimination report stalking dating violence" },
+
+  /* Campus Life */
+  { id: "osil", cat: "life", name: "Office of Student Involvement & Leadership",
+    summary: "Home base for registered student organizations. Start a club or get help running one.",
+    location: "Arkansas Union, A607",
+    phones: [{ l: "Main", n: "479-575-5255" }],
+    details: ["Every student organization registers each year with this office.", "A registered group needs at least six active members."],
+    web: "https://involvement.uark.edu/", source: "https://involvement.uark.edu/registered-student-organizations/finances-and-fundraising.php",
+    tags: "clubs organizations rso start a club leadership involvement get involved" },
+  { id: "hogsync", cat: "life", name: "HogSync",
+    summary: "Browse and join the U of A's 463 registered student organizations.",
+    web: "https://hogsync.uark.edu/club_signup", source: "https://hogsync.uark.edu/club_signup",
+    tags: "clubs organizations join rso find friends events groups" },
+  { id: "asg", cat: "life", name: "Associated Student Government (ASG)",
+    summary: "The student-led government that allocates student fees and represents undergraduates.",
+    location: "Arkansas Union, A669",
+    web: "https://osa.uark.edu/associated-student-government/index.php", source: "https://osa.uark.edu/associated-student-government/index.php",
+    tags: "student government asg senate vote election fees" },
+  { id: "cce", cat: "life", name: "Center for Community Engagement",
+    summary: "Volunteer with Northwest Arkansas nonprofits. Home of the Volunteer Action Center.",
+    details: ["The Volunteer Action Center runs Make a Difference Day, Dream B.I.G. mentoring, the VAC Literacy Program, the Full Circle Food Pantry, and Razorback Food Recovery."],
+    web: "https://service.uark.edu/civicengagement.php", source: "https://service.uark.edu/civicengagement.php",
+    tags: "volunteer service hours community nonprofit mentoring give back" },
+  { id: "multicultural", cat: "life", name: "Multicultural Center",
+    summary: "Programs, community, and support for students from all backgrounds.",
+    location: "Arkansas Union, Room 404",
+    phones: [{ l: "Main", n: "479-575-8405" }],
+    web: "https://diversity.uark.edu/resources/campus-resource-centers.php", source: "https://diversity.uark.edu/resources/campus-resource-centers.php",
+    tags: "multicultural diversity culture community belonging first gen" },
+  { id: "vmsc", cat: "life", name: "Veteran & Military-Affiliated Student Center",
+    summary: "Help with GI Bill benefits and support for student veterans and military families.",
+    location: "GACS Suites 115–116, 640 N. Garland Ave.",
+    phones: [{ l: "Main", n: "479-575-8742" }],
+    web: "https://vmsc.uark.edu/", source: "https://vmsc.uark.edu/",
+    tags: "veteran veterans military gi bill va benefits rotc" },
+
+  /* Tech & Transit */
+  { id: "it", cat: "tech", name: "IT Help Desk",
+    summary: "Help with UARK accounts, Wi-Fi, passwords, and devices. Walk up, call, chat, or open a ticket.",
+    location: "Arkansas Union, in front of the Tech Spot lab",
+    phones: [{ l: "Help Desk", n: "479-575-2905" }],
+    hours: [h(WK, 7, 24), h([0, 6], 11, 24)],
+    details: ["Open a ticket at help.uark.edu.", "Chat with tech support at its.uark.edu/chat."],
+    web: "https://its.uark.edu/chat/", source: "https://its.uark.edu/chat/",
+    tags: "it wifi wi-fi password locked out email laptop computer tech help printer duo login account" },
+  { id: "transit", cat: "tech", name: "Razorback Transit",
+    summary: "Campus bus system. Track buses live in the Passio GO! app.",
+    hours: [h(WK, 7, 22)],
+    details: ["Full service runs Monday–Friday, 7 a.m. to 10 p.m., during the academic year.", "Regular routes don't run on home football game days. Game-day shuttles run instead."],
+    web: "https://parking.uark.edu/transit/", source: "https://parking.uark.edu/transit/",
+    tags: "bus buses transit route schedule ride passio shuttle game day" },
+  { id: "parking", cat: "tech", name: "Transit and Parking Office",
+    summary: "Parking permits, citations, and transit questions.",
+    location: "155 Razorback Road",
+    phones: [{ l: "Main", n: "479-575-7275" }],
+    web: "https://parking.uark.edu/", source: "https://parking.uark.edu/",
+    tags: "parking permit ticket citation car garage" }
+];
+const byId = Object.fromEntries(R.map(r => [r.id, r]));
+
+/* ===== Registered student organizations (names from rso.uark.edu; groupings are ours) ===== */
+const ORGS = [
+  ["Advertising Club", "Professional"], ["Alpha Epsilon Delta", "Academic"], ["Alpha Kappa Psi", "Professional"],
+  ["Amateur Radio Club", "Hobby"], ["Association of Computing Machinery", "Academic"], ["Bangladesh Student Organization", "Cultural"],
+  ["Biology Club", "Academic"], ["Biomedical Engineering Society", "Academic"], ["Black Graduate Student Association", "Cultural"],
+  ["Chi Alpha Christian Fellowship", "Faith"], ["Chinese Students and Scholars Association", "Cultural"], ["College Republicans", "Political"],
+  ["Gamma Eta Sorority, Inc.", "Greek"], ["Global Medical and Dental Brigades", "Service"], ["Japanese Student Association", "Cultural"],
+  ["Latter-day Saint Student Association", "Faith"], ["League of United Latin American Citizens", "Cultural"], ["National Society of Black Engineers", "Professional"],
+  ["Pi Mu Epsilon", "Academic"], ["Red Cross Student Organization", "Service"], ["Reading is Fundamental", "Service"],
+  ["Rotaract Club at the University of Arkansas", "Service"], ["Society of Women Engineers", "Professional"], ["Tau Beta Pi", "Academic"],
+  ["Theta Chi Fraternity", "Greek"], ["UARK Gaming", "Hobby"], ["Women in Finance", "Professional"], ["Young Democrats", "Political"]
+].map(([name, type]) => ({ name, type, id: name.toLowerCase().replace(/[^a-z0-9]+/g, "-") }));
+
+/* ===== Simulated student account (made up for the demo) ===== */
+const ME = {
+  first: "Jordan", last: "Avery", id: "010999042", classYear: "Sophomore",
+  major: "Supply Chain Management", college: "Sam M. Walton College of Business",
+  hall: "Pomfret Hall",
+  balance: 1248.60, installmentDue: "Nov 21, 2026",
+  aid: { status: "1 item to review", detail: "Spring 2027 award letter is ready" },
+  meal: { plan: "15-Meal Plan", left: 6, of: 15 },
+  dining: 142.35,
+  appt: { what: "Writing Studio", when: "Thu, Nov 5 · 2:00 PM", where: "The CORD, Room 209", rid: "writing" },
+  orgs: ["women-in-finance", "uark-gaming", "rotaract-club-at-the-university-of-arkansas"],
+  saved: ["pantry", "it", "caps"]
+};
+
+/* ===== Storage (per-viewer convenience only) ===== */
+const store = {
+  get(k, d) { try { const v = localStorage.getItem("emp1:" + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem("emp1:" + k, JSON.stringify(v)); } catch (e) {} },
+  clear() { try { Object.keys(localStorage).filter(k => k.startsWith("emp1:")).forEach(k => localStorage.removeItem(k)); } catch (e) {} }
+};
+
+const S = {
+  user: store.get("user", null),
+  view: "home",
+  cat: null,
+  q: "",
+  saved: new Set(store.get("saved", ME.saved)),
+  joined: new Set(store.get("joined", ME.orgs)),
+  orgType: "All",
+  sheet: null
+};
+
+/* ===== Utils ===== */
+const esc = (s) => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const money = (n) => "$" + n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const $ = (sel, el = document) => el.querySelector(sel);
+const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+function nowChicago() {
+  try {
+    const parts = new Intl.DateTimeFormat("en-US", { timeZone: "America/Chicago", weekday: "short", hour: "numeric", minute: "numeric", hourCycle: "h23" }).formatToParts(new Date());
+    const get = (t) => (parts.find(p => p.type === t) || {}).value;
+    return { day: DAYS.indexOf(get("weekday")), min: (parseInt(get("hour"), 10) % 24) * 60 + parseInt(get("minute"), 10) };
+  } catch (e) { const d = new Date(); return { day: d.getDay(), min: d.getHours() * 60 + d.getMinutes() }; }
+}
+function fmtMin(m) {
+  if (m === 1440 || m === 0) return "midnight";
+  if (m === 720) return "noon";
+  const hr = Math.floor(m / 60), mn = m % 60, ap = hr >= 12 ? "PM" : "AM";
+  return ((hr % 12) || 12) + (mn ? ":" + String(mn).padStart(2, "0") : "") + " " + ap;
+}
+function status(r) {
+  if (!r.hours) return null;
+  const { day, min } = nowChicago();
+  if (r.hours.some(x => x.o === 0 && x.c === 1440 && x.days.length === 7)) return { open: true, text: "Open 24/7" };
+  for (const x of r.hours) if (x.days.includes(day) && min >= x.o && min < x.c) return { open: true, text: "Open · closes " + fmtMin(x.c) };
+  for (let i = 0; i < 8; i++) {
+    const d = (day + i) % 7;
+    const opts = r.hours.filter(x => x.days.includes(d) && (i > 0 || x.o > min)).sort((a, b) => a.o - b.o);
+    if (opts.length) return { open: false, text: "Closed · opens " + (i === 0 ? "" : i === 1 ? "tomorrow " : DAYS[d] + " ") + fmtMin(opts[0].o) };
+  }
+  return { open: false, text: "Closed" };
+}
+function statusPill(r) {
+  const s = status(r);
+  if (!s) return '<span class="pill na">Hours on website</span>';
+  return '<span class="pill ' + (s.open ? "ok" : "closed") + '">' + esc(s.text) + "</span>";
+}
+function hoursTable(r) {
+  const today = nowChicago().day;
+  return '<table class="hours-tbl"><tbody>' + [1, 2, 3, 4, 5, 6, 0].map(d => {
+    const xs = r.hours.filter(x => x.days.includes(d));
+    const txt = xs.length ? xs.map(x => (x.o === 0 && x.c === 1440) ? "24 hours" : fmtMin(x.o) + " – " + fmtMin(x.c)).join(", ") : "Closed";
+    return '<tr class="' + (d === today ? "today" : "") + '"><td>' + DAYS[d] + "</td><td>" + esc(txt) + "</td></tr>";
+  }).join("") + "</tbody></table>";
+}
+
+/* ===== Search ===== */
+const STOP = new Set("i a an the my me to for of in on at and or is it im i'm can cant can't do does how where what who need want get help with find some".split(" "));
+function terms(q) { return q.toLowerCase().replace(/[^a-z0-9' -]/g, " ").split(/\s+/).filter(t => t && !STOP.has(t)); }
+function score(r, ts) {
+  if (!ts.length) return 0;
+  const name = r.name.toLowerCase(), tags = r.tags, sum = r.summary.toLowerCase(), cat = CATS[r.cat].label.toLowerCase();
+  const det = ((r.details || []).join(" ") + " " + (r.location || "")).toLowerCase();
+  let s = 0, hit = 0;
+  for (const t of ts) {
+    let ts0 = 0;
+    if (t.length < 3) {
+      /* short words like "ac" or "it" only count as whole words */
+      const w = new RegExp("\\b" + t + "\\b");
+      if (w.test(name)) ts0 += 6;
+      if (w.test(tags)) ts0 += 4;
+      if (ts0) hit++;
+      s += ts0;
+      continue;
+    }
+    const stem = t.length > 4 ? t.replace(/(ing|ed|es|s)$/, "") : t;
+    if (name.includes(t)) ts0 += 6; else if (name.includes(stem)) ts0 += 4;
+    if ((" " + tags + " ").includes(" " + t)) ts0 += 4; else if (tags.includes(stem)) ts0 += 2;
+    if (sum.includes(stem)) ts0 += 2;
+    if (cat.includes(stem)) ts0 += 2;
+    if (det.includes(stem)) ts0 += 1;
+    if (ts0) hit++;
+    s += ts0;
+  }
+  return hit ? s * (hit / ts.length) : 0;
+}
+function search(q) {
+  const ts = terms(q);
+  return R.map(r => ({ r, s: score(r, ts) })).filter(x => x.s > 0).sort((a, b) => b.s - a.s).map(x => x.r);
+}
+function orgSearch(q) {
+  const ts = terms(q);
+  if (!ts.length) return [];
+  return ORGS.filter(o => ts.every(t => (o.name + " " + o.type).toLowerCase().includes(t)));
+}
+function hl(text, q) {
+  const ts = terms(q).filter(t => t.length > 2);
+  let out = esc(text);
+  if (!ts.length) return out;
+  const re = new RegExp("(" + ts.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|") + ")", "gi");
+  return out.replace(re, "<mark>$1</mark>");
+}
+
+/* ===== Renderers ===== */
+const root = document.getElementById("root");
+
+function renderLogin() {
+  root.innerHTML = `
+  <div class="login">
+    <section class="login-art gutter" aria-label="About ${APP_NAME}">
+      <div class="wordmark">${APP_NAME}</div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <h1>Every campus resource. One search.</h1>
+        <p>Financial aid, health care, tutoring, dining, student orgs, and more for University of Arkansas students, in one place and tied to your student account.</p>
+      </div>
+      <div class="ticker" aria-hidden="true">
+        <span>“I can't pay my bill”</span><span>“free food”</span><span>“broken AC in my dorm”</span><span>“I feel anxious”</span><span>“internship help”</span><span>“ride home at night”</span>
+      </div>
+    </section>
+    <section class="login-form-wrap gutter">
+      <form class="login-form" id="loginForm" autocomplete="off" novalidate>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <span class="proto-tag" style="align-self:flex-start">Prototype demo</span>
+          <h2 style="font-size:26px">Sign in</h2>
+          <p class="muted">Connect your student account to see your balances, meal swipes, and saved resources.</p>
+        </div>
+        <div class="demo-warning" role="note">
+          <span aria-hidden="true">⚠</span>
+          <span><strong>Demo only.</strong> Type any username and password. Don't use your real UARK password. Nothing is checked, saved, or sent.</span>
+        </div>
+        <div class="field">
+          <label for="username">Username</label>
+          <input id="username" name="username" autocomplete="off" placeholder="e.g. demo.student" required>
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" autocomplete="new-password" placeholder="Anything works">
+        </div>
+        <p id="loginErr" class="muted" style="color:var(--crit);font-size:13.5px" hidden>Enter a username to continue. Any username works.</p>
+        <button class="btn btn-primary" type="submit">Sign in</button>
+        <button class="btn btn-ghost" type="button" id="demoFill">Use demo account</button>
+        <p class="login-foot">${APP_NAME} is an independent student prototype for an entrepreneurship class. It is not affiliated with or endorsed by the University of Arkansas.</p>
+      </form>
+    </section>
+  </div>`;
+  const form = $("#loginForm");
+  $("#demoFill").addEventListener("click", () => { $("#username").value = "demo.student"; $("#password").value = "demo1234"; $("#username").focus(); });
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const u = $("#username").value.trim();
+    $("#password").value = "";
+    if (!u) { $("#loginErr").hidden = false; $("#username").focus(); return; }
+    S.user = u.slice(0, 40);
+    store.set("user", S.user);
+    S.view = "home";
+    renderApp();
+  });
+}
+
+const NAV = [
+  ["home", "Home", "home"], ["browse", "Directory", "grid"], ["orgs", "Orgs", "people"], ["saved", "Saved", "star"], ["account", "Account", "user"]
+];
+
+function renderApp() {
+  const initials = (ME.first[0] + ME.last[0]).toUpperCase();
+  const navBtns = (cls) => NAV.map(([v, l, ic]) => `<button class="nav-btn ${cls}" data-nav="${v}" ${S.view === v ? 'aria-current="page"' : ""}>${svg(ic)}<span>${l}</span></button>`).join("");
+  root.innerHTML = `
+  <div class="app">
+    <nav class="rail" aria-label="Main">
+      <div class="wordmark">${APP_NAME}</div>
+      ${navBtns("")}
+      <div class="rail-foot">Independent student prototype. Not affiliated with the University of Arkansas.</div>
+    </nav>
+    <div class="main">
+      <header class="topbar">
+        <div class="topbar-inner gutter">
+          <span class="mobile-mark">${APP_NAME}</span>
+          <label class="search" for="q">
+            ${svg("search")}
+            <input id="q" type="search" placeholder="Search resources, e.g. “pay my tuition”" value="${esc(S.q)}" autocomplete="off" aria-label="Search campus resources">
+          </label>
+          <span class="spacer"></span>
+          <span class="proto-tag">Prototype</span>
+          <button class="help-now" id="helpNow">Help now</button>
+          <button class="avatar" data-nav="account" aria-label="Account">${initials}</button>
+        </div>
+      </header>
+      <main class="content gutter" id="view"></main>
+    </div>
+    <nav class="tabbar" aria-label="Main">${navBtns("")}</nav>
+  </div>
+  <div id="sheetHost"></div>`;
+  root.querySelectorAll("[data-nav]").forEach(b => b.addEventListener("click", () => go(b.dataset.nav)));
+  const q = $("#q");
+  q.addEventListener("input", () => { S.q = q.value; if (S.view !== "browse") { S.view = "browse"; S.cat = null; syncNav(); } renderView(); });
+  q.addEventListener("keydown", (e) => { if (e.key === "Escape") { q.value = ""; S.q = ""; renderView(); } });
+  $("#helpNow").addEventListener("click", openCrisis);
+  renderView();
+}
+
+function syncNav() {
+  root.querySelectorAll(".nav-btn[data-nav]").forEach(b => { if (b.dataset.nav === S.view) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
+  try { history.replaceState(null, "", "#" + S.view); } catch (e) {}
+}
+
+function go(view, opts = {}) {
+  S.view = view;
+  if (view !== "browse") { S.q = ""; const q = $("#q"); if (q) q.value = ""; }
+  if ("cat" in opts) S.cat = opts.cat;
+  if ("q" in opts) { S.q = opts.q; const q = $("#q"); if (q) q.value = opts.q; }
+  syncNav();
+  renderView();
+  window.scrollTo({ top: 0 });
+}
+
+function renderView() {
+  const v = $("#view");
+  if (!v) return;
+  v.innerHTML = ({ home: viewHome, browse: viewBrowse, orgs: viewOrgs, saved: viewSaved, account: viewAccount }[S.view] || viewHome)() + footer();
+  bindView(v);
+}
+
+function footer() {
+  return `<footer class="footer">
+    <p><b>${APP_NAME}</b> is an independent student prototype built for an entrepreneurship class. It is not affiliated with or endorsed by the University of Arkansas.</p>
+    <p>Resource details come from official uark.edu pages, checked ${CHECKED}. Each listing links to its source. Account details are made up for the demo. Holidays and breaks can change hours, so confirm with the office.</p>
+  </footer>`;
+}
+
+function rowHtml(r, q = "") {
+  return `<button class="row" data-open="${r.id}">
+    <span class="ico">${svg(CATS[r.cat].icon)}</span>
+    <span style="min-width:0;display:flex;flex-direction:column;gap:2px">
+      <span class="t">${hl(r.name, q)}</span>
+      <span class="s">${hl(r.summary, q)}</span>
+    </span>
+    <span class="meta">${statusPill(r)}<span class="where">${esc(CATS[r.cat].label)}</span></span>
+  </button>`;
+}
+
+function viewHome() {
+  const hr = nowChicago().min / 60;
+  const greet = hr < 12 ? "Good morning" : hr < 17 ? "Good afternoon" : "Good evening";
+  const pct = Math.round((ME.meal.left / ME.meal.of) * 100);
+  const tries = ["pay my bill", "I feel anxious", "free food", "tutoring for chemistry", "broken AC in my dorm", "internship", "ride home at night", "locked out of my account"];
+  const openNow = R.filter(r => { const s = status(r); return s && s.open && s.text !== "Open 24/7"; }).slice(0, 5);
+  return `
+  <section class="hello">
+    <span class="eyebrow">${esc(ME.classYear)} · ${esc(ME.major)}</span>
+    <h1>${greet}, ${esc(ME.first)}.</h1>
+    <p class="muted">Here's what needs your attention, plus every campus resource in one search.</p>
+  </section>
+
+  <section class="section" aria-labelledby="acctH">
+    <div class="section-head"><h2 id="acctH">Your account</h2><span class="sample-note">Sample data for the demo</span></div>
+    <div class="acct-grid">
+      <button class="acct" data-open="treasurer">
+        <span class="label">Balance due</span>
+        <span class="value">${money(ME.balance)}</span>
+        <span class="pill warn" style="align-self:flex-start">Installment due ${esc(ME.installmentDue)}</span>
+        <span class="go">Pay in Workday →</span>
+      </button>
+      <button class="acct" data-open="finaid">
+        <span class="label">Financial aid</span>
+        <span class="value" style="font-size:20px">${esc(ME.aid.status)}</span>
+        <span class="sub">${esc(ME.aid.detail)}</span>
+        <span class="go">Contact Financial Aid →</span>
+      </button>
+      <button class="acct" data-open="mealplans">
+        <span class="label">${esc(ME.meal.plan)}</span>
+        <span class="value">${ME.meal.left}<span class="muted" style="font-size:16px"> of ${ME.meal.of} swipes left</span></span>
+        <span class="meter" role="img" aria-label="${pct}% of weekly swipes left"><i style="width:${pct}%"></i></span>
+        <span class="sub">Resets Sunday morning · ${money(ME.dining)} dining dollars</span>
+      </button>
+      <button class="acct" data-open="${ME.appt.rid}">
+        <span class="label">Next appointment</span>
+        <span class="value" style="font-size:20px">${esc(ME.appt.what)}</span>
+        <span class="sub">${esc(ME.appt.when)}<br>${esc(ME.appt.where)}</span>
+        <span class="go">View details →</span>
+      </button>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="tryH">
+    <h2 id="tryH">Search like you talk</h2>
+    <div class="try">${tries.map(t => `<button class="chip" data-try="${esc(t)}">${esc(t)}</button>`).join("")}</div>
+  </section>
+
+  <section class="section" aria-labelledby="catH">
+    <div class="section-head"><h2 id="catH">Browse by category</h2><span class="count">${R.length} resources</span></div>
+    <div class="cat-grid">${Object.entries(CATS).map(([k, c]) => `
+      <button class="cat" data-cat="${k}"><span class="ico">${svg(c.icon)}</span><span style="display:flex;flex-direction:column;gap:2px"><b>${esc(c.label)}</b><small>${esc(c.blurb)}</small></span></button>`).join("")}
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="openH">
+    <div class="section-head"><h2 id="openH">Open right now</h2><span class="count">Fayetteville time</span></div>
+    ${openNow.length ? `<div class="list">${openNow.map(r => rowHtml(r)).join("")}</div>` : `<div class="empty">Most offices are closed right now. Tap <b>Help now</b> for 24/7 support lines.</div>`}
+  </section>`;
+}
+
+function viewBrowse() {
+  const q = S.q.trim();
+  let list = q ? search(q) : R.slice();
+  if (S.cat) list = list.filter(r => r.cat === S.cat);
+  const orgHits = q ? orgSearch(q) : [];
+  const chips = `<div class="filters" role="toolbar" aria-label="Filter by category">
+    <button class="chip" data-cat="" aria-pressed="${!S.cat}">All</button>
+    ${Object.entries(CATS).map(([k, c]) => `<button class="chip" data-cat="${k}" aria-pressed="${S.cat === k}">${esc(c.label)}</button>`).join("")}
+  </div>`;
+  const head = q
+    ? `<h1>Results for “${esc(q)}”</h1><p class="count">${list.length} resource${list.length === 1 ? "" : "s"}${S.cat ? " in " + esc(CATS[S.cat].label) : ""}</p>`
+    : `<h1>${S.cat ? esc(CATS[S.cat].label) : "Campus directory"}</h1><p class="count">${list.length} resources</p>`;
+  return `<section class="section">${head}${chips}</section>
+    ${list.length ? `<div class="list">${list.map(r => rowHtml(r, q)).join("")}</div>`
+      : `<div class="empty"><b style="color:var(--ink)">Nothing matched “${esc(q)}”.</b><span>Try a shorter phrase like “food”, “tutor”, or “bill”, or browse a category.</span><button class="btn btn-ghost btn-sm" data-cat="">Show all resources</button></div>`}
+    ${orgHits.length ? `<section class="section"><h2>Student organizations</h2><div class="org-grid">${orgHits.map(orgHtml).join("")}</div></section>` : ""}`;
+}
+
+function orgHtml(o) {
+  const on = S.joined.has(o.id);
+  const ini = o.name.replace(/[^A-Za-z ]/g, "").split(" ").filter(w => w && w[0] === w[0].toUpperCase()).slice(0, 2).map(w => w[0]).join("");
+  return `<div class="org"><span class="mono-badge" aria-hidden="true">${esc(ini)}</span>
+    <span class="body"><b>${esc(o.name)}</b><small>${esc(o.type)}</small></span>
+    <button class="follow" data-join="${o.id}" aria-pressed="${on}">${on ? "Following" : "Follow"}</button></div>`;
+}
+
+function viewOrgs() {
+  const types = ["All", ...Array.from(new Set(ORGS.map(o => o.type))).sort()];
+  const list = ORGS.filter(o => S.orgType === "All" || o.type === S.orgType);
+  const mine = ORGS.filter(o => S.joined.has(o.id));
+  return `<section class="section">
+      <h1>Student organizations</h1>
+      <p class="muted">A sample of the U of A's 463 registered student organizations. Follow the ones you like to keep them on your account.</p>
+    </section>
+    <div class="callout">
+      <p><b>See every group on HogSync.</b> HogSync is the university's official directory for joining organizations and finding events.</p>
+      <a class="btn btn-primary btn-sm" href="https://hogsync.uark.edu/club_signup" target="_blank" rel="noopener">Open HogSync</a>
+    </div>
+    ${mine.length ? `<section class="section"><div class="section-head"><h2>Following</h2><span class="sample-note">Sample data for the demo</span></div><div class="org-grid">${mine.map(orgHtml).join("")}</div></section>` : ""}
+    <section class="section">
+      <div class="section-head"><h2>Explore</h2><span class="count">${list.length} groups</span></div>
+      <div class="filters" role="toolbar" aria-label="Filter organizations">${types.map(t => `<button class="chip" data-otype="${t}" aria-pressed="${S.orgType === t}">${t}</button>`).join("")}</div>
+      <div class="org-grid">${list.map(orgHtml).join("")}</div>
+      <p class="count">Names come from the university's Active RSO Websites list. The groupings are ours.</p>
+    </section>
+    <section class="section"><h2>Get involved</h2><div class="list">${["osil", "asg", "cce", "multicultural"].map(id => rowHtml(byId[id])).join("")}</div></section>`;
+}
+
+function viewSaved() {
+  const list = R.filter(r => S.saved.has(r.id));
+  return `<section class="section"><h1>Saved</h1><p class="muted">Resources you've starred. Tap the star in any listing to add or remove it.</p></section>
+    ${list.length ? `<div class="list">${list.map(r => rowHtml(r)).join("")}</div>` : `<div class="empty"><b style="color:var(--ink)">No saved resources yet.</b><span>Open any resource and tap <b>Save</b> to keep it here.</span><button class="btn btn-ghost btn-sm" data-nav2="browse">Browse the directory</button></div>`}`;
+}
+
+function viewAccount() {
+  return `<section class="section"><h1>Account</h1></section>
+    <div class="profile">
+      <span class="avatar" aria-hidden="true">${esc((ME.first[0] + ME.last[0]).toUpperCase())}</span>
+      <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+        <b style="font-size:18px">${esc(ME.first)} ${esc(ME.last)}</b>
+        <span class="muted">Signed in as <span class="mono">${esc(S.user || "demo.student")}</span></span>
+        <span class="linked">Student account connected (simulated)</span>
+      </div>
+    </div>
+    <section class="section">
+      <div class="section-head"><h2>Student profile</h2><span class="sample-note">Sample data for the demo</span></div>
+      <div class="kv">
+        <div>Student ID</div><div class="mono">${esc(ME.id)}</div>
+        <div>Class</div><div>${esc(ME.classYear)}</div>
+        <div>Major</div><div>${esc(ME.major)}</div>
+        <div>College</div><div>${esc(ME.college)}</div>
+        <div>Residence hall</div><div>${esc(ME.hall)}</div>
+        <div>Meal plan</div><div>${esc(ME.meal.plan)} · ${money(ME.dining)} dining dollars</div>
+        <div>Balance due</div><div class="mono">${money(ME.balance)}</div>
+      </div>
+    </section>
+    <section class="section">
+      <h2>How the account link would work</h2>
+      <p class="muted" style="max-width:65ch">In this prototype, nothing connects to real university systems. A launched version would use the university's single sign-on, so students never give their password to ${APP_NAME}, and would read balances and schedules only with the student's permission.</p>
+    </section>
+    <div class="btn-row">
+      <button class="btn btn-ghost" id="resetDemo">Reset demo</button>
+      <button class="btn btn-primary" id="signOut">Sign out</button>
+    </div>`;
+}
+
+function bindView(v) {
+  v.querySelectorAll("[data-open]").forEach(b => b.addEventListener("click", () => openSheet(b.dataset.open)));
+  v.querySelectorAll("[data-try]").forEach(b => b.addEventListener("click", () => go("browse", { q: b.dataset.try, cat: null })));
+  v.querySelectorAll("[data-cat]").forEach(b => b.addEventListener("click", () => go("browse", { cat: b.dataset.cat || null, q: S.view === "browse" ? S.q : "" })));
+  v.querySelectorAll("[data-otype]").forEach(b => b.addEventListener("click", () => { S.orgType = b.dataset.otype; renderView(); }));
+  v.querySelectorAll("[data-nav2]").forEach(b => b.addEventListener("click", () => go(b.dataset.nav2, { cat: null })));
+  v.querySelectorAll("[data-join]").forEach(b => b.addEventListener("click", () => {
+    const id = b.dataset.join;
+    if (S.joined.has(id)) S.joined.delete(id); else S.joined.add(id);
+    store.set("joined", [...S.joined]);
+    toast(S.joined.has(id) ? "Following" : "Unfollowed");
+    renderView();
+  }));
+  const so = $("#signOut", v);
+  if (so) so.addEventListener("click", () => { S.user = null; store.set("user", null); renderLogin(); });
+  const rd = $("#resetDemo", v);
+  if (rd) rd.addEventListener("click", () => {
+    store.clear();
+    S.saved = new Set(ME.saved); S.joined = new Set(ME.orgs); S.user = null; S.q = ""; S.cat = null; S.orgType = "All";
+    renderLogin();
+  });
+}
+
+/* ===== Detail sheet ===== */
+function closeSheet() { const host = $("#sheetHost"); if (host) host.innerHTML = ""; document.removeEventListener("keydown", escClose); if (S.lastFocus) try { S.lastFocus.focus(); } catch (e) {} }
+function escClose(e) { if (e.key === "Escape") closeSheet(); }
+function mountSheet(inner, label) {
+  S.lastFocus = document.activeElement;
+  const host = $("#sheetHost");
+  host.innerHTML = `<div class="scrim" id="scrim"><div class="sheet" role="dialog" aria-modal="true" aria-label="${esc(label)}">${inner}</div></div>`;
+  $("#scrim").addEventListener("click", (e) => { if (e.target.id === "scrim") closeSheet(); });
+  host.querySelectorAll("[data-close]").forEach(b => b.addEventListener("click", closeSheet));
+  host.querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click", () => copy(b.dataset.copy, b)));
+  document.addEventListener("keydown", escClose);
+  const x = host.querySelector(".x"); if (x) x.focus();
+}
+
+function openSheet(id) {
+  const r = byId[id];
+  if (!r) return;
+  const saved = S.saved.has(r.id);
+  const facts = [];
+  if (r.location) facts.push(`<div class="fact">${svg("pin")}<div><div class="k">Location</div>${esc(r.location)}</div></div>`);
+  if (r.hours) facts.push(`<div class="fact">${svg("clock")}<div style="display:flex;flex-direction:column;gap:6px"><div class="k">Regular hours</div>${statusPill(r)}${hoursTable(r)}</div></div>`);
+  (r.phones || []).forEach(p => {
+    const digits = p.n.split(",")[0].split(" (")[0];
+    facts.push(`<div class="fact">${svg("phone")}<div><div class="k">${esc(p.l)}</div><div class="phone-line"><span class="mono" style="user-select:all">${esc(p.n)}</span><button class="copy" data-copy="${esc(digits)}">Copy</button></div></div></div>`);
+  });
+  if (r.email) facts.push(`<div class="fact">${svg("mail")}<div><div class="k">Email</div><div class="phone-line"><span class="mono" style="user-select:all">${esc(r.email)}</span><button class="copy" data-copy="${esc(r.email)}">Copy</button></div></div></div>`);
+  if (r.web) facts.push(`<div class="fact">${svg("link")}<div><div class="k">Website</div><a href="${esc(r.web)}" target="_blank" rel="noopener">${esc(r.web.replace(/^https?:\/\//, "").replace(/\/$/, ""))}</a></div></div>`);
+  const inner = `
+    <div class="sheet-top">
+      <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+        <span class="eyebrow">${esc(CATS[r.cat].label)}</span>
+        <h2 style="font-size:24px">${esc(r.name)}</h2>
+      </div>
+      <button class="x" data-close aria-label="Close">×</button>
+    </div>
+    <p>${esc(r.summary)}</p>
+    <div class="btn-row">
+      <button class="btn btn-primary btn-sm" id="saveBtn" aria-pressed="${saved}">${saved ? "★ Saved" : "☆ Save"}</button>
+      ${r.web ? `<a class="btn btn-ghost btn-sm" href="${esc(r.web)}" target="_blank" rel="noopener">Visit website</a>` : ""}
+    </div>
+    <div class="facts">${facts.join("")}</div>
+    ${r.details && r.details.length ? `<div style="display:flex;flex-direction:column;gap:8px"><h3>Good to know</h3><ul class="bul">${r.details.map(d => `<li>${esc(d)}</li>`).join("")}</ul></div>` : ""}
+    <p class="source">Source: <a href="${esc(r.source)}" target="_blank" rel="noopener">${esc(r.source.replace(/^https?:\/\//, ""))}</a><br>Checked ${CHECKED}. Confirm with the office before you go.</p>`;
+  mountSheet(inner, r.name);
+  $("#saveBtn").addEventListener("click", (e) => {
+    if (S.saved.has(r.id)) S.saved.delete(r.id); else S.saved.add(r.id);
+    store.set("saved", [...S.saved]);
+    const on = S.saved.has(r.id);
+    e.currentTarget.textContent = on ? "★ Saved" : "☆ Save";
+    e.currentTarget.setAttribute("aria-pressed", on);
+    toast(on ? "Saved" : "Removed from Saved");
+    if (S.view === "saved") renderView();
+  });
+}
+
+function openCrisis() {
+  const lines = [
+    { l: "Emergency or immediate danger", n: "911", top: true },
+    { l: "CAPS counseling, 24/7 for mental health emergencies", n: "479-575-5276", top: true },
+    { l: "988 Suicide & Crisis Lifeline (call or text)", n: "988" },
+    { l: "Crisis Text Line: text HOME to", n: "741741" },
+    { l: "UAPD non-emergency (call or text)", n: "479-575-2222" },
+    { l: "Safe Ride", n: "479-575-7233" }
+  ];
+  const inner = `
+    <div class="sheet-top"><div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">Help now</span><h2 style="font-size:24px">You don't have to handle this alone.</h2></div><button class="x" data-close aria-label="Close">×</button></div>
+    <p class="muted">These lines are listed on official U of A pages. If you or someone else is in danger, call 911.</p>
+    <div class="crisis-list">${lines.map(x => `<div class="crisis ${x.top ? "top" : ""}"><div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:13.5px;font-weight:600">${esc(x.l)}</span><span class="num">${esc(x.n)}</span></div><button class="copy" data-copy="${esc(x.n)}">Copy</button></div>`).join("")}</div>
+    <p class="source">Sources: <a href="https://health.uark.edu/mental-health/suicide-prevention.php" target="_blank" rel="noopener">health.uark.edu/mental-health/suicide-prevention.php</a>, <a href="https://uapd.uark.edu/" target="_blank" rel="noopener">uapd.uark.edu</a></p>`;
+  mountSheet(inner, "Help now");
+}
+
+/* ===== Small UI helpers ===== */
+let toastT;
+function toast(msg) {
+  let t = $(".toast");
+  if (!t) { t = document.createElement("div"); t.className = "toast"; t.setAttribute("role", "status"); document.body.appendChild(t); }
+  t.textContent = msg; t.hidden = false;
+  clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 1800);
+}
+function copy(text, btn) {
+  const done = () => { btn.textContent = "Copied"; setTimeout(() => { btn.textContent = "Copy"; }, 1500); };
+  try {
+    navigator.clipboard.writeText(text).then(done, () => selectNear(btn));
+  } catch (e) { selectNear(btn); }
+}
+function selectNear(btn) {
+  const span = btn.parentElement.querySelector(".mono, .num");
+  if (!span) return;
+  const range = document.createRange(); range.selectNodeContents(span);
+  const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+  toast("Selected. Press Ctrl+C or Cmd+C to copy.");
+}
+
+/* ===== Boot ===== */
+const hash = (location.hash || "").replace("#", "");
+if (NAV.some(n => n[0] === hash)) S.view = hash;
+if (S.user) renderApp(); else renderLogin();
+})();
+</script>
+
+</body>
+</html>

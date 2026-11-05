@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<meta name="description" content="Every University of Arkansas campus resource in one search. Try the Hog Perks demo and join the waitlist."><meta property="og:title" content="Hog Perks"><meta property="og:description" content="Every University of Arkansas campus resource in one search. Try the Hog Perks demo and join the waitlist."><meta property="og:type" content="website">
+<title>Hog Perks</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: sticky tab bar; three views. Welcome = cardinal hero with a live search card, then the problem, features and categories. Demo = guide beside a phone frame. Waitlist = one focused sign-up card. */
+:root {
+  --bg: #f6f3f3;
+  --surface: #ffffff;
+  --sunk: #efe9ea;
+  --ink: #1d1517;
+  --muted: #6c5f62;
+  --line: #e3d9db;
+  --brand: #9d2235;
+  --brand-strong: #7d1a2a;
+  --brand-ink: #ffffff;
+  --brand-soft: #f6e3e6;
+  --hero: #9d2235;
+  --hero-ink: #ffffff;
+  --ok: #1d7448;
+  --ok-soft: #e1f2e8;
+  --warn: #9a5800;
+  --warn-soft: #fbeed8;
+  --shadow: 0 1px 2px rgba(40, 10, 16, .06), 0 12px 32px rgba(40, 10, 16, .12);
+  --f-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Public Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --r: 12px;
+  --max: 1120px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141012; --surface: #1e181a; --sunk: #191315; --ink: #f3eded; --muted: #ab9ca0; --line: #352a2d;
+    --brand: #e45a70; --brand-strong: #f07f91; --brand-ink: #1a0a0e; --brand-soft: #3b1c23;
+    --hero: #5e1520; --hero-ink: #fff4f5;
+    --ok: #5fcf93; --ok-soft: #173426; --warn: #f0b056; --warn-soft: #3a2a12;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 32px rgba(0,0,0,.45);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141012; --surface: #1e181a; --sunk: #191315; --ink: #f3eded; --muted: #ab9ca0; --line: #352a2d;
+  --brand: #e45a70; --brand-strong: #f07f91; --brand-ink: #1a0a0e; --brand-soft: #3b1c23;
+  --hero: #5e1520; --hero-ink: #fff4f5;
+  --ok: #5fcf93; --ok-soft: #173426; --warn: #f0b056; --warn-soft: #3a2a12;
+  --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 32px rgba(0,0,0,.45);
+  color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.55; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--surface); }
+h1, h2, h3 { font-family: var(--f-display); line-height: 1.08; margin: 0; text-wrap: balance; }
+h2 { font-size: clamp(26px, 3.6vw, 38px); font-weight: 800; letter-spacing: -.015em; }
+h3 { font-size: 19px; font-weight: 600; line-height: 1.2; }
+p { margin: 0; }
+a { color: var(--brand); }
+button { font: inherit; cursor: pointer; }
+:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; border-radius: 6px; }
+.wrap { max-width: var(--max); margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--brand); }
+.muted { color: var(--muted); }
+.mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+
+/* ---------- Top bar ---------- */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: color-mix(in srgb, var(--surface) 94%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.top .wrap { display: flex; align-items: center; gap: 16px; padding-block: 10px; }
+.mark { font-family: var(--f-display); font-weight: 800; font-size: 19px; color: var(--brand); text-decoration: none; letter-spacing: -.01em; margin-right: auto; border: 0; background: none; padding: 0; }
+.tabs { display: flex; gap: 4px; background: var(--sunk); padding: 4px; border-radius: 999px; }
+.tab { border: 0; background: transparent; color: var(--muted); font-weight: 700; font-size: 14.5px; padding: 8px 16px; border-radius: 999px; white-space: nowrap; }
+.tab:hover { color: var(--ink); }
+.tab[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+.tab .short { display: none; }
+
+/* ---------- Buttons ---------- */
+.btn { border: 0; border-radius: 10px; padding: 13px 20px; font-weight: 700; font-size: 15.5px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
+.btn-primary { background: var(--brand); color: var(--brand-ink); }
+.btn-primary:hover { background: var(--brand-strong); }
+.btn-light { background: var(--hero-ink); color: var(--hero); }
+.btn-light:hover { opacity: .92; }
+.btn-outline-light { background: transparent; color: var(--hero-ink); border: 1.5px solid color-mix(in srgb, var(--hero-ink) 55%, transparent); }
+.btn-outline-light:hover { background: color-mix(in srgb, var(--hero-ink) 10%, transparent); }
+.btn-ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+.btn-ghost:hover { background: var(--sunk); }
+.btn[aria-disabled="true"] { opacity: .55; cursor: not-allowed; }
+.btn-row { display: flex; gap: 12px; flex-wrap: wrap; }
+
+/* ---------- Welcome: hero ---------- */
+.hero { background: var(--hero); color: var(--hero-ink); }
+.hero .wrap { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: 48px; align-items: center; padding-block: 64px 72px; }
+.hero h1 { font-size: clamp(40px, 6.4vw, 76px); font-weight: 800; letter-spacing: -.025em; line-height: .98; }
+.hero h1 em { font-style: normal; text-decoration: underline; text-decoration-thickness: .08em; text-underline-offset: .12em; }
+.hero-copy { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+.hero-copy p { font-size: 18px; max-width: 44ch; opacity: .92; }
+.proto { align-self: flex-start; font-size: 12px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; border: 1px solid color-mix(in srgb, var(--hero-ink) 40%, transparent); border-radius: 999px; padding: 4px 11px; }
+
+.demo-card { background: var(--surface); color: var(--ink); border-radius: 18px; box-shadow: var(--shadow); padding: 18px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.fake-search { display: flex; align-items: center; gap: 10px; border: 1.5px solid var(--brand); border-radius: 999px; padding: 12px 16px; font-size: 16.5px; min-height: 50px; }
+.fake-search svg { width: 19px; height: 19px; color: var(--muted); flex: none; }
+.typed { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.caret { display: inline-block; width: 2px; height: 1.1em; background: var(--brand); vertical-align: -3px; margin-left: 1px; animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.result { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 12px; align-items: center; padding: 12px; border-radius: 12px; background: var(--sunk); transition: opacity .25s ease, transform .25s ease; }
+.result.out { opacity: 0; transform: translateY(6px); }
+.result .ico { width: 40px; height: 40px; border-radius: 10px; background: var(--brand-soft); color: var(--brand); display: grid; place-items: center; }
+.result .ico svg { width: 20px; height: 20px; }
+.result b { display: block; font-size: 15px; }
+.result small { color: var(--muted); font-size: 13px; }
+.card-foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 13px; color: var(--muted); }
+.pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px; color: var(--ok); background: var(--ok-soft); }
+.pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+
+/* ---------- Welcome: sections ---------- */
+.band { padding-block: 72px; }
+.band + .band { border-top: 1px solid var(--line); }
+.split { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 48px; align-items: start; }
+.stack { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.lede { font-size: 18px; color: var(--muted); max-width: 52ch; }
+.big-num { font-family: var(--f-display); font-weight: 800; font-size: clamp(64px, 9vw, 112px); line-height: .9; color: var(--brand); letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.hosts { display: flex; flex-wrap: wrap; gap: 6px; }
+.hosts span { font-family: var(--f-mono); font-size: 12.5px; border: 1px solid var(--line); background: var(--surface); border-radius: 6px; padding: 4px 8px; color: var(--muted); }
+.features { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; }
+.feature { display: flex; flex-direction: column; gap: 10px; }
+.feature .ico { width: 44px; height: 44px; border-radius: 12px; background: var(--brand-soft); color: var(--brand); display: grid; place-items: center; }
+.feature .ico svg { width: 22px; height: 22px; }
+.feature p { color: var(--muted); }
+.feature .ex { font-family: var(--f-mono); font-size: 13px; color: var(--ink); background: var(--sunk); border-radius: 6px; padding: 6px 9px; align-self: flex-start; }
+.cats { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; }
+.cat { display: flex; align-items: center; gap: 12px; padding: 14px; border: 1px solid var(--line); background: var(--surface); border-radius: var(--r); }
+.cat .ico { width: 36px; height: 36px; border-radius: 10px; background: var(--brand-soft); color: var(--brand); display: grid; place-items: center; flex: none; }
+.cat .ico svg { width: 19px; height: 19px; }
+.cat b { display: block; font-size: 14.5px; }
+.cat small { color: var(--muted); font-size: 12.5px; }
+.cta-band { background: var(--ink); color: var(--bg); border-radius: 20px; padding: 40px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+.cta-band h2 { color: var(--bg); max-width: 18ch; }
+.cta-band .btn-primary { background: var(--brand); }
+
+/* ---------- Demo view ---------- */
+.demo-view .wrap { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: start; padding-block: 56px 72px; }
+.steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0; counter-reset: s; border-top: 1px solid var(--line); }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 14px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+.steps li::before { content: counter(s); width: 30px; height: 30px; border-radius: 50%; background: var(--brand-soft); color: var(--brand); font-weight: 800; display: grid; place-items: center; font-size: 14px; }
+.steps div > b { display: block; }
+.steps span { color: var(--muted); font-size: 15px; }
+.steps code { font-family: var(--f-mono); font-size: 13px; background: var(--sunk); padding: 1px 6px; border-radius: 5px; color: var(--ink); }
+.note { font-size: 14px; background: var(--warn-soft); border-radius: 10px; padding: 12px 14px; }
+.note b { color: var(--warn); }
+.phone { width: 390px; max-width: 100%; height: 780px; border-radius: 44px; padding: 12px; background: var(--ink); box-shadow: var(--shadow); position: sticky; top: calc(84px + env(safe-area-inset-top, 0px)); }
+.phone iframe { width: 100%; height: 100%; border: 0; border-radius: 34px; background: var(--bg); display: block; }
+
+/* ---------- Waitlist view ---------- */
+.wait .wrap { padding-block: 56px 80px; display: flex; justify-content: center; }
+.wait-card { width: 100%; max-width: 640px; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 40px; display: flex; flex-direction: column; gap: 22px; box-shadow: var(--shadow); }
+.wait-card h1 { font-size: clamp(32px, 5vw, 46px); font-weight: 800; letter-spacing: -.02em; }
+.gets { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.gets li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; }
+.gets svg { width: 20px; height: 20px; color: var(--ok); margin-top: 2px; }
+.privacy { font-size: 13.5px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 16px; display: flex; flex-direction: column; gap: 6px; }
+.pending { font-size: 14px; color: var(--muted); }
+
+/* ---------- Footer ---------- */
+.foot { border-top: 1px solid var(--line); }
+.foot .wrap { padding-block: 28px 40px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 13px; color: var(--muted); }
+.foot p { max-width: 70ch; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .hero .wrap, .split, .demo-view .wrap { grid-template-columns: minmax(0, 1fr); gap: 36px; }
+  .hero .wrap { padding-block: 44px 52px; }
+  .features { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .phone { position: static; justify-self: center; height: 720px; }
+  .band { padding-block: 52px; }
+  .cta-band { padding: 28px; }
+}
+@media (max-width: 560px) {
+  .top .wrap { flex-wrap: wrap; gap: 8px; }
+  .mark { font-size: 17px; }
+  .tabs { width: 100%; }
+  .tab { flex: 1; padding: 8px 6px; font-size: 14px; }
+  .tab .long { display: none; }
+  .tab .short { display: inline; }
+  .wait-card { padding: 24px; }
+  .phone { border-radius: 36px; padding: 8px; height: 680px; }
+  .phone iframe { border-radius: 29px; }
+  .btn-row .btn { flex: 1 1 auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <button class="mark" data-go="welcome">Hog Perks</button>
+    <nav class="tabs" role="tablist" aria-label="Site sections">
+      <button class="tab" role="tab" id="tab-welcome" data-go="welcome" aria-controls="welcome" aria-selected="true"><span class="long">Welcome</span><span class="short">Welcome</span></button>
+      <button class="tab" role="tab" id="tab-demo" data-go="demo" aria-controls="demo" aria-selected="false"><span class="long">Try the demo</span><span class="short">Demo</span></button>
+      <button class="tab" role="tab" id="tab-waitlist" data-go="waitlist" aria-controls="waitlist" aria-selected="false"><span class="long">Join the waitlist</span><span class="short">Waitlist</span></button>
+    </nav>
+  </div>
+</header>
+
+<!-- ================= Welcome ================= -->
+<main id="welcome" role="tabpanel" aria-labelledby="tab-welcome">
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-copy">
+        <span class="proto">Student startup · Prototype</span>
+        <h1>Every campus resource. <em>One search.</em></h1>
+        <p>Hog Perks puts financial aid, health care, tutoring, dining, student orgs and more for University of Arkansas students in one app, tied to your student account.</p>
+        <div class="btn-row">
+          <button class="btn btn-light" data-go="demo">Try the demo</button>
+          <button class="btn btn-outline-light" data-go="waitlist">Join the waitlist</button>
+        </div>
+      </div>
+      <div class="demo-card" aria-label="Example searches">
+        <div class="fake-search" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <span class="typed" id="typed">I can't pay my tuition</span><span class="caret"></span>
+        </div>
+        <div class="result" id="result">
+          <span class="ico" id="resIco"></span>
+          <span style="min-width:0"><b id="resName">Treasurer's Office (Student Accounts)</b><small id="resSub">Money &amp; Aid · Payment plans, pay in Workday</small></span>
+        </div>
+        <div class="card-foot"><span>Search the way you'd ask a friend.</span><span class="pill">Top result</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap split">
+      <div class="stack">
+        <span class="eyebrow">The problem</span>
+        <div class="big-num">25</div>
+        <h2>university websites to find the help you need.</h2>
+      </div>
+      <div class="stack">
+        <p class="lede">To build our demo directory, we pulled resources from 25 separate uark.edu sites. Students in a hard week shouldn't have to know which office owns their problem. They should be able to type the problem and get the answer.</p>
+        <div class="hosts" aria-label="University websites in the directory">
+          <span>finaid</span><span>treasurer</span><span>scholarships</span><span>uofacares</span><span>health</span><span>cea</span><span>urec</span><span>success</span><span>libraries</span><span>registrar</span><span>service</span><span>housing</span><span>union</span><span>fama</span><span>career</span><span>uapd</span><span>titleix</span><span>involvement</span><span>hogsync</span><span>osa</span><span>diversity</span><span>vmsc</span><span>its</span><span>parking</span><span>news</span>
+        </div>
+        <p class="muted" style="font-size:13.5px">Each one is a separate <span class="mono">.uark.edu</span> site.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap stack" style="gap:36px">
+      <div class="stack" style="gap:10px">
+        <span class="eyebrow">How it works</span>
+        <h2>Built around how students ask for help.</h2>
+      </div>
+      <div class="features">
+        <div class="feature">
+          <span class="ico" data-icon="search"></span>
+          <h3>Search like you talk</h3>
+          <p>Type the problem, not the office name. The right resource comes up first, with hours, location, and contact info.</p>
+          <span class="ex">“broken AC in my dorm”</span>
+        </div>
+        <div class="feature">
+          <span class="ico" data-icon="user"></span>
+          <h3>Your account at a glance</h3>
+          <p>See your balance, aid status, meal swipes, and next appointment. Each one links straight to the office that handles it.</p>
+          <span class="ex">6 of 15 swipes left</span>
+        </div>
+        <div class="feature">
+          <span class="ico" data-icon="shield"></span>
+          <h3>Help when it matters</h3>
+          <p>One tap shows 24/7 counseling, campus police, and crisis lines. Offices show whether they're open right now.</p>
+          <span class="ex">Open · closes 5 PM</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap stack" style="gap:28px">
+      <div class="stack" style="gap:10px">
+        <span class="eyebrow">What's inside</span>
+        <h2>38 resources across 9 categories, plus student orgs.</h2>
+      </div>
+      <div class="cats" id="cats"></div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <div class="cta-band">
+        <h2>Would you use the full version?</h2>
+        <div class="btn-row">
+          <button class="btn btn-primary" data-go="waitlist">Join the waitlist</button>
+          <button class="btn btn-ghost" data-go="demo" style="color:var(--bg);border-color:color-mix(in srgb, var(--bg) 35%, transparent)">Try the demo first</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ================= Demo ================= -->
+<main id="demo" class="demo-view" role="tabpanel" aria-labelledby="tab-demo" hidden>
+  <div class="wrap">
+    <div class="stack" style="gap:24px">
+      <div class="stack" style="gap:12px">
+        <span class="eyebrow">Interactive demo</span>
+        <h2>Take it for a spin.</h2>
+        <p class="lede">The demo runs right here. The student account is made up, and the campus resources come from official uark.edu pages.</p>
+      </div>
+      <ol class="steps">
+        <li><div><b>Sign in with anything</b><span>Tap <b>Use demo account</b>, or type any username and password.</span></div></li>
+        <li><div><b>Search like you talk</b><span>Try <code>free food</code>, <code>I feel anxious</code>, or <code>pay my bill</code>.</span></div></li>
+        <li><div><b>Open a resource</b><span>See hours, whether it's open now, location, and a link to the official page. Tap Save to keep it.</span></div></li>
+        <li><div><b>Tap Help now</b><span>The red button shows 24/7 crisis and safety lines.</span></div></li>
+      </ol>
+      <p class="note"><b>Demo only.</b> Don't enter your real UARK password. The demo doesn't check, save, or send what you type.</p>
+      <div class="btn-row">
+        <a class="btn btn-primary" href="demo.html" target="_blank" rel="noopener">Open full screen</a>
+        <button class="btn btn-ghost" data-go="waitlist">Join the waitlist</button>
+      </div>
+    </div>
+    <div class="phone">
+      <iframe id="demoFrame" title="Hog Perks demo app" data-src="demo.html" loading="lazy"></iframe>
+    </div>
+  </div>
+</main>
+
+<!-- ================= Waitlist ================= -->
+<main id="waitlist" class="wait" role="tabpanel" aria-labelledby="tab-waitlist" hidden>
+  <div class="wrap">
+    <div class="wait-card">
+      <div class="stack" style="gap:12px">
+        <span class="eyebrow">Waitlist</span>
+        <h1>Want the full version?</h1>
+        <p class="lede">Leave your email if you'd use Hog Perks once it's built. It tells us whether to keep going.</p>
+      </div>
+      <ul class="gets">
+        <li><span data-icon="check"></span><span>Early access when a full version launches</span></li>
+        <li><span data-icon="check"></span><span>A short note on what we build next</span></li>
+        <li><span data-icon="check"></span><span>No spam. One or two emails at most.</span></li>
+      </ul>
+      <div class="stack" style="gap:10px">
+        <a class="btn btn-primary" id="formBtn" href="#" target="_blank" rel="noopener">Sign up with your email</a>
+        <p class="pending" id="formPending" hidden>The sign-up form isn't connected yet. Check back soon.</p>
+        <p class="muted" style="font-size:13.5px" id="formNote">Opens a short Google Form in a new tab. It asks only for your email.</p>
+      </div>
+      <div class="privacy">
+        <p>We only use your email to ask whether you're interested in a full version of Hog Perks. We won't sell or share it.</p>
+        <p>Hog Perks is an independent student project for an entrepreneurship class. It is not affiliated with or endorsed by the University of Arkansas.</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <p>Hog Perks is an independent student prototype built for an entrepreneurship class. It is not affiliated with or endorsed by the University of Arkansas. Resource details in the demo come from official uark.edu pages, checked November 3, 2026.</p>
+    <p>© 2026 Hog Perks team</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+"use strict";
+
+/* Paste the Google Form's share link here (Send → link icon). Leave empty to show "not connected yet". */
+const FORM_URL = "https://forms.gle/ZULw4u3VqufDGE949";
+
+const I = {
+  search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c.8-4.2 4-6.5 8-6.5s7.2 2.3 8 6.5"/>',
+  shield: '<path d="M12 3 4.5 6v5.5c0 4.6 3.1 8.2 7.5 9.5 4.4-1.3 7.5-4.9 7.5-9.5V6z"/>',
+  check: '<circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.7 2.7L16 9.8"/>',
+  money: '<rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.8"/><path d="M6 9.5v5M18 9.5v5"/>',
+  heart: '<path d="M12 20s-7.5-4.6-9-9.5C2 6.9 4.4 4.5 7.2 4.5c2 0 3.6 1.1 4.8 2.8 1.2-1.7 2.8-2.8 4.8-2.8 2.8 0 5.2 2.4 4.2 6C19.5 15.4 12 20 12 20z"/>',
+  book: '<path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H20v15H5.5A1.5 1.5 0 0 0 4 19.5z"/><path d="M4 19.5A1.5 1.5 0 0 0 5.5 21H20"/>',
+  food: '<path d="M7 3v8M4.5 3v5a2.5 2.5 0 0 0 5 0V3M7 11v10"/><path d="M17 21V3c-2.2 1.2-3.5 3.7-3.5 7v4H17"/>',
+  bed: '<path d="M3 18V6M3 14h18v4M21 14v-2.5A3.5 3.5 0 0 0 17.5 8H11v6"/><circle cx="7" cy="11" r="2"/>',
+  brief: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 5v2M3 12.5h18"/>',
+  spark: '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8"/>',
+  bus: '<rect x="4" y="3" width="16" height="15" rx="3"/><path d="M4 11h16M8 18v3M16 18v3"/><circle cx="8" cy="14.5" r=".8"/><circle cx="16" cy="14.5" r=".8"/>'
+};
+const svg = (n) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + I[n] + '</svg>';
+document.querySelectorAll("[data-icon]").forEach(el => { el.innerHTML = svg(el.dataset.icon); });
+
+/* Categories match the demo app */
+const CATS = [
+  ["money", "Money & Aid", "Aid, bills, scholarships"], ["heart", "Health & Wellness", "Medical, counseling, rec"],
+  ["book", "Academics", "Tutoring, library, records"], ["food", "Dining & Food", "Dining halls, pantry"],
+  ["bed", "Housing", "Halls, repairs"], ["brief", "Career", "Jobs, internships, résumés"],
+  ["shield", "Safety", "Police, rides, Title IX"], ["spark", "Campus Life", "Orgs, centers, service"],
+  ["bus", "Tech & Transit", "IT help, buses, parking"]
+];
+document.getElementById("cats").innerHTML = CATS.map(([ic, name, sub]) =>
+  '<div class="cat"><span class="ico">' + svg(ic) + '</span><span><b>' + name + '</b><small>' + sub + '</small></span></div>').join("");
+
+/* Hero search card: real queries and the demo's real top results */
+const EXAMPLES = [
+  ["I can't pay my tuition", "money", "Treasurer's Office (Student Accounts)", "Money & Aid · Payment plans, pay in Workday"],
+  ["I feel anxious", "heart", "Counseling & Psychological Services (CAPS)", "Health & Wellness · 24/7 line for emergencies"],
+  ["free food", "food", "Jane B. Gearhart Full Circle Food Pantry", "Dining & Food · Free groceries with a U of A ID"],
+  ["broken AC in my dorm", "bed", "Residence Hall Repairs (FIX IT)", "Housing · Service center open 24/7"],
+  ["internship help", "brief", "Offices of Career Connections", "Career · Book in Handshake"]
+];
+const typed = document.getElementById("typed"), result = document.getElementById("result");
+const setResult = (e) => {
+  document.getElementById("resIco").innerHTML = svg(e[1]);
+  document.getElementById("resName").textContent = e[2];
+  document.getElementById("resSub").textContent = e[3];
+};
+setResult(EXAMPLES[0]);
+const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+if (!reduce) {
+  let i = 0;
+  const wait = (ms) => new Promise(r => setTimeout(r, ms));
+  (async function loop() {
+    await wait(2600);
+    for (;;) {
+      i = (i + 1) % EXAMPLES.length;
+      const e = EXAMPLES[i];
+      result.classList.add("out");
+      for (let n = typed.textContent.length; n >= 0; n--) { typed.textContent = typed.textContent.slice(0, n); await wait(22); }
+      for (let n = 1; n <= e[0].length; n++) { typed.textContent = e[0].slice(0, n); await wait(55); }
+      await wait(250);
+      setResult(e);
+      result.classList.remove("out");
+      await wait(2600);
+    }
+  })();
+}
+
+/* Waitlist button */
+const formBtn = document.getElementById("formBtn");
+if (FORM_URL) {
+  formBtn.href = FORM_URL;
+} else {
+  formBtn.removeAttribute("href");
+  formBtn.setAttribute("aria-disabled", "true");
+  document.getElementById("formPending").hidden = false;
+  document.getElementById("formNote").hidden = true;
+}
+
+/* Tabs (bookmarkable as #welcome, #demo, #waitlist) */
+const VIEWS = ["welcome", "demo", "waitlist"];
+function show(v, focus) {
+  if (!VIEWS.includes(v)) v = "welcome";
+  VIEWS.forEach(id => {
+    document.getElementById(id).hidden = id !== v;
+    document.getElementById("tab-" + id).setAttribute("aria-selected", String(id === v));
+  });
+  if (v === "demo") {
+    const f = document.getElementById("demoFrame");
+    if (!f.getAttribute("src")) f.setAttribute("src", f.dataset.src);
+  }
+  try { history.replaceState(null, "", "#" + v); } catch (e) {}
+  window.scrollTo({ top: 0 });
+  if (focus) document.getElementById("tab-" + v).focus();
+}
+document.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", () => show(b.dataset.go)));
+document.querySelector(".tabs").addEventListener("keydown", (e) => {
+  const cur = VIEWS.findIndex(v => document.getElementById("tab-" + v).getAttribute("aria-selected") === "true");
+  if (e.key === "ArrowRight") show(VIEWS[(cur + 1) % VIEWS.length], true);
+  if (e.key === "ArrowLeft") show(VIEWS[(cur + VIEWS.length - 1) % VIEWS.length], true);
+});
+window.addEventListener("hashchange", () => show(location.hash.replace("#", "")));
+show((location.hash || "").replace("#", ""));
+})();
+</script>
+
+</body>
+</html>
